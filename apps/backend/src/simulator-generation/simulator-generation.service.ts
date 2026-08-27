@@ -128,7 +128,7 @@ ${repairContext ? `\nRepair context:\n${repairContext}\n` : ''}
     for (let attempt = 0; attempt < 2; attempt += 1) {
       try {
         const repairContext = attempt === 0 ? undefined : `Previous generation failed. The generated code missed requirements. Keep the same topic but repair the implementation.`;
-        const aiResult = await this.ai.generate(buildCodePrompt(repairContext), model, []);
+        const aiResult = await this.ai.generate(buildCodePrompt(repairContext), model, [], 8192);
         const rawText = typeof aiResult === 'string' ? aiResult : JSON.stringify(aiResult);
         let parsed: unknown;
         try {

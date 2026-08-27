@@ -31,7 +31,7 @@ export class GeminiSimulatorProviderService implements SimulatorAiProvider {
     required: ['title', 'description', 'learningObjectives', 'files', 'dependencies', 'teacherInstructions'],
   };
 
-  async generate(prompt: string, requestedModel: string, context: string[], maxOutputTokens = 1400): Promise<Record<string, unknown>> {
+  async generate(prompt: string, requestedModel: string, context: string[], maxOutputTokens = 8192): Promise<Record<string, unknown>> {
     const apiKey = process.env.GEMINI_API_KEY?.trim();
     const model = process.env.GEMINI_MODEL?.trim() || requestedModel || 'gemini-3.6-flash';
 
@@ -48,7 +48,7 @@ export class GeminiSimulatorProviderService implements SimulatorAiProvider {
           temperature: 0.2,
           responseMimeType: 'application/json',
           responseJsonSchema: GeminiSimulatorProviderService.responseJsonSchema,
-          maxOutputTokens: Math.min(Math.max(maxOutputTokens, 1200), 1500),
+          maxOutputTokens: Math.min(Math.max(maxOutputTokens, 1200), 8192),
         },
       });
       const rawText = response.text?.trim() ?? '';

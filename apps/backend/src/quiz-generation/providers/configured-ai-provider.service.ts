@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { GoogleGenAI } from '@google/genai';
 import { QuizAiProvider } from './quiz-ai-provider.interface';
 
 @Injectable()
@@ -52,10 +53,29 @@ export class ConfiguredAiProviderService implements QuizAiProvider {
   }
 
   async generate(prompt: string, model: string, context: string[]): Promise<Record<string, unknown>> {
+    if (this.provider === 'gemini') {
+      const apiKey = process.env.GEMINI_API_KEY?.trim();
+      if (!apiKey) {
+        throw new Error('GEMINI_API_KEY is not configured for the selected Gemini provider.');
+      }
+
+      const client = new GoogleGenAI({ apiKey });
+      const response = await client.models.generateContent({
+        model: process.env.GEMINI_MODEL?.trim() || model || 'gemini-2.5-flash',
+        contents: `${prompt}\n\nContext:\n${context.join('\n---\n')}`,
+        config: { temperature: 0.2, responseMimeType: 'application/json', maxOutputTokens: 12000 },
+      });
+      const content = response.text?.trim() ?? '';
+      if (!content) {
+        throw new Error('Gemini returned an empty quiz response.');
+      }
+      return this.parseJsonObject(content);
+    }
+
     const apiKey = (process.env.AI_API_KEY ?? process.env.GROQ_API_KEY)?.trim();
 
     if (this.provider !== 'groq') {
-      throw new Error('Only the Groq AI provider is supported for Mathematics quiz generation.');
+      throw new Error(`Unsupported AI provider: ${this.provider}`);
     }
 
     if (!apiKey) {

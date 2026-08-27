@@ -20,7 +20,7 @@ export default function EditSimulatorPage() {
     setLoading(true)
     ;(async () => {
       try {
-        const payload = await fetchWithAuth(`/teacher/simulators/${id}`)
+        const payload = await fetchWithAuth(`/api/teacher/simulators/${id}`)
         const sim = (payload as any).simulator
         if (!sim) throw new Error('Simulator not found')
         setTitle(sim.title ?? '')
@@ -59,7 +59,7 @@ export default function EditSimulatorPage() {
                 let parsed: any = {}
                 try { parsed = JSON.parse(configJson) } catch (e) { throw new Error('Config JSON is invalid') }
                 const body = { title, prompt, config: parsed }
-                await fetchWithAuth(`/teacher/simulators/${id}`, { method: 'PATCH', body: JSON.stringify(body) })
+                await fetchWithAuth(`/api/teacher/simulators/${id}`, { method: 'PATCH', body: JSON.stringify(body) })
                 router.push('/teacher/simulators')
               } catch (ex: any) { setError(ex?.message ?? String(ex)) }
             }}>Save</button>

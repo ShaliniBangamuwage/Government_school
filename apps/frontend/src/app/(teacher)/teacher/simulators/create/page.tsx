@@ -52,7 +52,7 @@ export default function TeacherSimulatorCreate() {
     setShowCode(false)
     try {
       const body = { ideaId: String(ideaIndex), prompt, title }
-      const payload = await fetchWithAuth('/simulator-generation/generate-from-prompt', {
+      const payload = await fetchWithAuth('/api/simulator-generation/generate-from-prompt', {
         method: 'POST',
         body: JSON.stringify(body),
       })
@@ -78,7 +78,7 @@ export default function TeacherSimulatorCreate() {
     }
 
     try {
-      await fetchWithAuth(`/teacher/simulators/${(result as any).id}`, {
+      await fetchWithAuth(`/api/teacher/simulators/${(result as any).id}`, {
         method: 'PATCH',
         body: JSON.stringify({
           title: (result as any).title ?? title,
@@ -96,7 +96,7 @@ export default function TeacherSimulatorCreate() {
   async function handlePublish() {
     try {
       if (!(result as any)?.id) throw new Error('No simulator id')
-      await fetchWithAuth(`/teacher/simulators/${(result as any).id}/publish`, { method: 'POST' })
+      await fetchWithAuth(`/api/teacher/simulators/${(result as any).id}/publish`, { method: 'POST' })
       alert('Published')
       router.push('/teacher/simulators')
     } catch (ex: any) { alert('Publish failed: ' + (ex?.message ?? String(ex))) }

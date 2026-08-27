@@ -12,7 +12,7 @@ export default function TeacherSimulatorsList() {
     async function load() {
       try {
         try {
-          const payload = await fetchWithAuth('/teacher/simulators')
+          const payload = await fetchWithAuth('/api/teacher/simulators')
           if (mounted) setItems((payload as any).simulators ?? [])
         } catch (e: any) {
           throw e
@@ -35,11 +35,11 @@ export default function TeacherSimulatorsList() {
           setItems(null)
           try {
             const body = { ideaId: '0', prompt: 'Demo simulator: interactive cylinder (radius & height sliders). Show volume and surface area.', title: 'Demo: Cylinder' }
-            const res = await fetchWithAuth('/simulator-generation/generate-from-prompt', { method: 'POST', body: JSON.stringify(body) })
+            const res = await fetchWithAuth('/api/simulator-generation/generate-from-prompt', { method: 'POST', body: JSON.stringify(body) })
             const sim = (res as any)?.simulator ?? res
             if (!sim || !sim.id) throw new Error('Failed to create demo simulator')
-            await fetchWithAuth(`/teacher/simulators/${sim.id}/publish`, { method: 'POST' })
-            const payload = await fetchWithAuth('/teacher/simulators')
+            await fetchWithAuth(`/api/teacher/simulators/${sim.id}/publish`, { method: 'POST' })
+            const payload = await fetchWithAuth('/api/teacher/simulators')
             setItems((payload as any).simulators ?? [])
             alert('Demo simulator created and published')
           } catch (ex: any) {
@@ -62,9 +62,9 @@ export default function TeacherSimulatorsList() {
                 <button style={{ marginRight: 8 }} onClick={() => { window.location.href = `/teacher/simulators/${it.id}/edit` }}>Edit</button>
                 <button onClick={async () => {
                   try {
-                    await fetchWithAuth(`/teacher/simulators/${it.id}/publish`, { method: 'POST' })
+                    await fetchWithAuth(`/api/teacher/simulators/${it.id}/publish`, { method: 'POST' })
                     // refresh list
-                    const payload = await fetchWithAuth('/teacher/simulators')
+                    const payload = await fetchWithAuth('/api/teacher/simulators')
                     setItems((payload as any).simulators ?? [])
                     window.alert('Published')
                   } catch (ex: any) { window.alert('Failed to publish: ' + (ex?.message ?? String(ex))) }
