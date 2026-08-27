@@ -41,7 +41,7 @@ export default function SimulatorViewerPage() {
     setError(null)
     ;(async () => {
       try {
-        const payload = await fetchWithAuth(`/simulators/${id}`)
+        const payload = await fetchWithAuth(`/api/simulators/${id}`)
         const found = (payload as any).simulator ?? null
         setSim(found)
       } catch (err) {
