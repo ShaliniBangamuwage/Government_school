@@ -1,7 +1,6 @@
-import { BadRequestException, HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import * as admin from 'firebase-admin';
 import { FirebaseAdminService } from '../infrastructure/firebase/firebase-admin.service';
-import { ConfiguredAiProviderService, GroqProviderError, GroqRateLimitError } from '../quiz-generation/providers/configured-ai-provider.service';
 import { SimulatorCodeValidatorService } from './simulator-code-validator.service';
 import { SimulatorAiProvider } from './providers/simulator-ai-provider.interface';
 import { SimulatorRequirementsExtractorService } from './simulator-requirements-extractor.service';
@@ -129,7 +128,7 @@ ${repairContext ? `\nRepair context:\n${repairContext}\n` : ''}
     for (let attempt = 0; attempt < 2; attempt += 1) {
       try {
         const repairContext = attempt === 0 ? undefined : `Previous generation failed. The generated code missed requirements. Keep the same topic but repair the implementation.`;
-        const aiResult = await this.ai.generate(buildCodePrompt(repairContext), model, [], 1500);
+        const aiResult = await this.ai.generate(buildCodePrompt(repairContext), model, []);
         const rawText = typeof aiResult === 'string' ? aiResult : JSON.stringify(aiResult);
         let parsed: unknown;
         try {
@@ -170,9 +169,6 @@ ${repairContext ? `\nRepair context:\n${repairContext}\n` : ''}
           },
         };
       } catch (error) {
-        if (error instanceof GroqRateLimitError || error instanceof GroqProviderError) {
-          throw error;
-        }
         lastError = error instanceof Error ? error : new Error(String(error));
       }
     }
@@ -223,25 +219,6 @@ ${repairContext ? `\nRepair context:\n${repairContext}\n` : ''}
     } catch (error) {
       if (error instanceof BadRequestException) {
         throw error;
-      }
-
-      if (error instanceof GroqRateLimitError) {
-        const details = error.details;
-        throw new HttpException({
-          message: error.message,
-          error: {
-            code: details?.code,
-            message: details?.upstreamMessage,
-          },
-          status: details?.status,
-          body: details?.body,
-          headers: details?.headers,
-          retryAfter: details?.retryAfter,
-          resetRequests: details?.resetRequests,
-          resetTokens: details?.resetTokens,
-          resetRequestsDay: details?.resetRequestsDay,
-          resetTokensDay: details?.resetTokensDay,
-        }, HttpStatus.TOO_MANY_REQUESTS);
       }
 
       const message = error instanceof Error ? error.message : 'The simulator could not be generated. Please revise the prompt and try again.';

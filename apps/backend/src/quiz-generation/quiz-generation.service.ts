@@ -598,7 +598,7 @@ export class QuizGenerationService {
       try {
         const response = await this.aiProvider.generate(
           `You are an AI Mathematics study coach. Analyze this student's completed quiz progress and return JSON only: {"headline":"short headline","summary":"one evidence-based sentence","actions":["three specific study actions"]}. Do not invent topics or scores. Data: ${JSON.stringify(summary)}`,
-          process.env.AI_MODEL || 'openai/gpt-oss-120b', [], 500,
+          process.env.AI_MODEL || 'openai/gpt-oss-120b', [],
         );
         if (typeof response?.headline === 'string' && typeof response?.summary === 'string' && Array.isArray(response?.actions)) {
           aiInsight = {
