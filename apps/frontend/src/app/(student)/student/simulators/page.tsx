@@ -21,7 +21,7 @@ export default function StudentSimulatorsPage() {
   useEffect(() => {
     ;(async () => {
       try {
-        const payload = await fetchWithAuth('/student/simulators')
+        const payload = await fetchWithAuth('/api/student/simulators')
         setItems((payload as any).simulators ?? [])
       } catch (err) {
         console.error('Failed to load simulators', err)
