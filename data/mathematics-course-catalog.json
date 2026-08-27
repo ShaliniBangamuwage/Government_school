@@ -1,0 +1,247 @@
+{
+  "catalogVersion": "2025.08",
+  "source": "official-sri-lanka-government-mathematics",
+  "generatedAt": "2025-08-21T00:00:00.000Z",
+  "entries": [
+    {
+      "id": "math-g6-en",
+      "grade": 6,
+      "medium": "English",
+      "title": "Mathematics Grade 6",
+      "description": "Official English-medium mathematics textbook for Grade 6.",
+      "officialPageUrl": "https://www.edupub.gov.lk/",
+      "officialPdfUrl": "https://www.edupub.gov.lk/",
+      "sourceAuthority": "Educational Publications Department, Sri Lanka"
+    },
+    {
+      "id": "math-g7-en",
+      "grade": 7,
+      "medium": "English",
+      "title": "Mathematics Grade 7",
+      "description": "Official English-medium mathematics textbook for Grade 7.",
+      "officialPageUrl": "https://www.edupub.gov.lk/",
+      "officialPdfUrl": "https://www.edupub.gov.lk/",
+      "sourceAuthority": "Educational Publications Department, Sri Lanka"
+    },
+    {
+      "id": "math-g8-en",
+      "grade": 8,
+      "medium": "English",
+      "title": "Mathematics Grade 8",
+      "description": "Official English-medium mathematics textbook for Grade 8.",
+      "officialPageUrl": "https://www.edupub.gov.lk/",
+      "officialPdfUrl": "https://www.edupub.gov.lk/",
+      "sourceAuthority": "Educational Publications Department, Sri Lanka"
+    },
+    {
+      "id": "math-g9-en",
+      "grade": 9,
+      "medium": "English",
+      "title": "Mathematics Grade 9",
+      "description": "Official English-medium mathematics textbook for Grade 9.",
+      "officialPageUrl": "https://www.edupub.gov.lk/",
+      "officialPdfUrl": "https://www.edupub.gov.lk/",
+      "sourceAuthority": "Educational Publications Department, Sri Lanka"
+    },
+    {
+      "id": "math-g10-en",
+      "grade": 10,
+      "medium": "English",
+      "title": "Mathematics Grade 10",
+      "description": "Official English-medium mathematics textbook for Grade 10.",
+      "officialPageUrl": "https://www.edupub.gov.lk/",
+      "officialPdfUrl": "https://www.edupub.gov.lk/",
+      "sourceAuthority": "Educational Publications Department, Sri Lanka"
+    },
+    {
+      "id": "math-g11-en",
+      "grade": 11,
+      "medium": "English",
+      "title": "Mathematics Grade 11",
+      "description": "Official English-medium mathematics textbook for Grade 11.",
+      "officialPageUrl": "https://www.nie.lk/",
+      "officialPdfUrl": "https://www.nie.lk/",
+      "sourceAuthority": "National Institute of Education, Sri Lanka"
+    },
+    {
+      "id": "math-g12-en",
+      "grade": 12,
+      "medium": "English",
+      "title": "Mathematics Grade 12",
+      "description": "Official English-medium mathematics textbook for Grade 12.",
+      "officialPageUrl": "https://www.nie.lk/",
+      "officialPdfUrl": "https://www.nie.lk/",
+      "sourceAuthority": "National Institute of Education, Sri Lanka"
+    },
+    {
+      "id": "math-g13-en",
+      "grade": 13,
+      "medium": "English",
+      "title": "Mathematics Grade 13",
+      "description": "Official English-medium mathematics textbook for Grade 13.",
+      "officialPageUrl": "https://www.nie.lk/",
+      "officialPdfUrl": "https://www.nie.lk/",
+      "sourceAuthority": "National Institute of Education, Sri Lanka"
+    },
+    {
+      "id": "math-g6-si",
+      "grade": 6,
+      "medium": "Sinhala",
+      "title": "Mathematics Grade 6 Sinhala",
+      "description": "Official Sinhala-medium mathematics textbook for Grade 6.",
+      "officialPageUrl": "https://e-thaksalawa.moe.gov.lk/",
+      "officialPdfUrl": "https://drive.google.com/file/d/example/view",
+      "sourceAuthority": "Educational Publications Department, Sri Lanka"
+    },
+    {
+      "id": "math-g7-si",
+      "grade": 7,
+      "medium": "Sinhala",
+      "title": "Mathematics Grade 7 Sinhala",
+      "description": "Official Sinhala-medium mathematics textbook for Grade 7.",
+      "officialPageUrl": "https://e-thaksalawa.moe.gov.lk/",
+      "officialPdfUrl": "https://drive.google.com/file/d/example/view",
+      "sourceAuthority": "Educational Publications Department, Sri Lanka"
+    },
+    {
+      "id": "math-g8-si",
+      "grade": 8,
+      "medium": "Sinhala",
+      "title": "Mathematics Grade 8 Sinhala",
+      "description": "Official Sinhala-medium mathematics textbook for Grade 8.",
+      "officialPageUrl": "https://e-thaksalawa.moe.gov.lk/",
+      "officialPdfUrl": "https://drive.google.com/file/d/example/view",
+      "sourceAuthority": "Educational Publications Department, Sri Lanka"
+    },
+    {
+      "id": "math-g9-si",
+      "grade": 9,
+      "medium": "Sinhala",
+      "title": "Mathematics Grade 9 Sinhala",
+      "description": "Official Sinhala-medium mathematics textbook for Grade 9.",
+      "officialPageUrl": "https://e-thaksalawa.moe.gov.lk/",
+      "officialPdfUrl": "https://drive.google.com/file/d/example/view",
+      "sourceAuthority": "Educational Publications Department, Sri Lanka"
+    },
+    {
+      "id": "math-g10-si",
+      "grade": 10,
+      "medium": "Sinhala",
+      "title": "Mathematics Grade 10 Sinhala",
+      "description": "Official Sinhala-medium mathematics textbook for Grade 10.",
+      "officialPageUrl": "https://e-thaksalawa.moe.gov.lk/",
+      "officialPdfUrl": "https://drive.google.com/file/d/example/view",
+      "sourceAuthority": "Educational Publications Department, Sri Lanka"
+    },
+    {
+      "id": "math-g11-si",
+      "grade": 11,
+      "medium": "Sinhala",
+      "title": "Mathematics Grade 11 Sinhala",
+      "description": "Official Sinhala-medium mathematics textbook for Grade 11.",
+      "officialPageUrl": "https://www.nie.lk/",
+      "officialPdfUrl": "https://www.nie.lk/",
+      "sourceAuthority": "National Institute of Education, Sri Lanka"
+    },
+    {
+      "id": "math-g12-si",
+      "grade": 12,
+      "medium": "Sinhala",
+      "title": "Mathematics Grade 12 Sinhala",
+      "description": "Official Sinhala-medium mathematics textbook for Grade 12.",
+      "officialPageUrl": "https://www.nie.lk/",
+      "officialPdfUrl": "https://www.nie.lk/",
+      "sourceAuthority": "National Institute of Education, Sri Lanka"
+    },
+    {
+      "id": "math-g13-si",
+      "grade": 13,
+      "medium": "Sinhala",
+      "title": "Mathematics Grade 13 Sinhala",
+      "description": "Official Sinhala-medium mathematics textbook for Grade 13.",
+      "officialPageUrl": "https://www.nie.lk/",
+      "officialPdfUrl": "https://www.nie.lk/",
+      "sourceAuthority": "National Institute of Education, Sri Lanka"
+    },
+    {
+      "id": "math-g6-ta",
+      "grade": 6,
+      "medium": "Tamil",
+      "title": "Mathematics Grade 6 Tamil",
+      "description": "Official Tamil-medium mathematics textbook for Grade 6.",
+      "officialPageUrl": "https://e-thaksalawa.moe.gov.lk/",
+      "officialPdfUrl": "https://e-thaksalawa.moe.gov.lk/",
+      "sourceAuthority": "Educational Publications Department, Sri Lanka"
+    },
+    {
+      "id": "math-g7-ta",
+      "grade": 7,
+      "medium": "Tamil",
+      "title": "Mathematics Grade 7 Tamil",
+      "description": "Official Tamil-medium mathematics textbook for Grade 7.",
+      "officialPageUrl": "https://e-thaksalawa.moe.gov.lk/",
+      "officialPdfUrl": "https://e-thaksalawa.moe.gov.lk/",
+      "sourceAuthority": "Educational Publications Department, Sri Lanka"
+    },
+    {
+      "id": "math-g8-ta",
+      "grade": 8,
+      "medium": "Tamil",
+      "title": "Mathematics Grade 8 Tamil",
+      "description": "Official Tamil-medium mathematics textbook for Grade 8.",
+      "officialPageUrl": "https://e-thaksalawa.moe.gov.lk/",
+      "officialPdfUrl": "https://e-thaksalawa.moe.gov.lk/",
+      "sourceAuthority": "Educational Publications Department, Sri Lanka"
+    },
+    {
+      "id": "math-g9-ta",
+      "grade": 9,
+      "medium": "Tamil",
+      "title": "Mathematics Grade 9 Tamil",
+      "description": "Official Tamil-medium mathematics textbook for Grade 9.",
+      "officialPageUrl": "https://e-thaksalawa.moe.gov.lk/",
+      "officialPdfUrl": "https://e-thaksalawa.moe.gov.lk/",
+      "sourceAuthority": "Educational Publications Department, Sri Lanka"
+    },
+    {
+      "id": "math-g10-ta",
+      "grade": 10,
+      "medium": "Tamil",
+      "title": "Mathematics Grade 10 Tamil",
+      "description": "Official Tamil-medium mathematics textbook for Grade 10.",
+      "officialPageUrl": "https://e-thaksalawa.moe.gov.lk/",
+      "officialPdfUrl": "https://e-thaksalawa.moe.gov.lk/",
+      "sourceAuthority": "Educational Publications Department, Sri Lanka"
+    },
+    {
+      "id": "math-g11-ta",
+      "grade": 11,
+      "medium": "Tamil",
+      "title": "Mathematics Grade 11 Tamil",
+      "description": "Official Tamil-medium mathematics textbook for Grade 11.",
+      "officialPageUrl": "https://www.nie.lk/",
+      "officialPdfUrl": "https://www.nie.lk/",
+      "sourceAuthority": "National Institute of Education, Sri Lanka"
+    },
+    {
+      "id": "math-g12-ta",
+      "grade": 12,
+      "medium": "Tamil",
+      "title": "Mathematics Grade 12 Tamil",
+      "description": "Official Tamil-medium mathematics textbook for Grade 12.",
+      "officialPageUrl": "https://www.nie.lk/",
+      "officialPdfUrl": "https://www.nie.lk/",
+      "sourceAuthority": "National Institute of Education, Sri Lanka"
+    },
+    {
+      "id": "math-g13-ta",
+      "grade": 13,
+      "medium": "Tamil",
+      "title": "Mathematics Grade 13 Tamil",
+      "description": "Official Tamil-medium mathematics textbook for Grade 13.",
+      "officialPageUrl": "https://www.nie.lk/",
+      "officialPdfUrl": "https://www.nie.lk/",
+      "sourceAuthority": "National Institute of Education, Sri Lanka"
+    }
+  ]
+}

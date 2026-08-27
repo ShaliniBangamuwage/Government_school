@@ -1,0 +1,9 @@
+{
+  "aliases": {
+    "science": ["science", "sciences", "විද්‍යාව", "அறிவியல்"],
+    "mathematics": ["mathematics", "maths", "math", "ගණිතය", "கணிதம்"],
+    "english": ["english", "enlish", "ඉංග්‍රීසි", "ஆங்கிலம்"],
+    "buddhism": ["buddhism", "religion", "බුද්ධ ශාසනය", "பௌத்தம்"],
+    "history": ["history", "historical studies", "ඉතිහාසය", "வரலாறு"]
+  }
+}

@@ -1,0 +1,11 @@
+packages:
+  - 'apps/*'
+  - 'packages/*'
+allowBuilds:
+  '@google/genai': false
+  '@nestjs/core': true
+  '@scarf/scarf': true
+  es5-ext: true
+  esbuild: true
+  protobufjs: true
+  unrs-resolver: true

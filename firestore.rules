@@ -1,0 +1,70 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isSelf(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    function hasRole(role) {
+      return isSignedIn() && request.auth.token.role == role;
+    }
+
+    function isPrivilegedRole(role) {
+      return role in ['admin', 'teacher', 'reviewer'];
+    }
+
+    function isVerifiedPublicTextbook() {
+      return resource.data.verified == true && resource.data.accessEnabled == true && resource.data.hostingPermission == 'link-only';
+    }
+
+    match /users/{uid} {
+      allow get: if isSelf(uid) || hasRole('admin') || hasRole('teacher') || hasRole('reviewer');
+      allow list: if false;
+
+      allow create: if isSelf(uid)
+        && request.resource.data.id == uid
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.role == 'student';
+
+      allow update: if (isSelf(uid)
+        && request.resource.data.id == uid
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.role == resource.data.role)
+        || (hasRole('admin') && request.resource.data.role in ['student', 'teacher', 'reviewer', 'admin']);
+
+      allow delete: if false;
+    }
+
+    match /subjects/{subjectId} {
+      allow get: if isSignedIn();
+      allow list: if isSignedIn();
+      allow create, update, delete: if hasRole('admin');
+    }
+
+    match /curriculumOfferings/{offeringId} {
+      allow get: if isSignedIn();
+      allow list: if isSignedIn();
+      allow create, update, delete: if hasRole('admin');
+    }
+
+    match /textbooks/{textbookId} {
+      allow get: if isSignedIn() && (resource == null || resource.data.verified == true && resource.data.accessEnabled == true || hasRole('admin'));
+      allow list: if isSignedIn() && (request.query.limit != null || hasRole('admin'));
+      allow create, update, delete: if hasRole('admin');
+    }
+
+    match /catalogImportRuns/{runId} {
+      allow get: if hasRole('admin');
+      allow list: if hasRole('admin');
+      allow create, update, delete: if hasRole('admin');
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

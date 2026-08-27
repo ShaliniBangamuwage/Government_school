@@ -1,0 +1,10 @@
+{
+  "name": "@edunexa/eslint-config",
+  "version": "0.1.0",
+  "private": true,
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "lint": "echo 'eslint-config placeholder'"
+  }
+}

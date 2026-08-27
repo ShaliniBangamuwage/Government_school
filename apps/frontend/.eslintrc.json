@@ -1,0 +1,9 @@
+{
+  "extends": ["next/core-web-vitals"],
+  "root": true,
+  "parserOptions": {
+    "ecmaVersion": 2022,
+    "sourceType": "module",
+    "ecmaFeatures": { "jsx": true }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "name": "edunexa",
+  "private": true,
+  "version": "1.0.0",
+  "packageManager": "pnpm@11.2.2",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev --parallel",
+    "dev:frontend": "pnpm --filter frontend dev",
+    "dev:backend": "pnpm --filter backend start:dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "type-check": "turbo run type-check",
+    "test": "turbo run test",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "set-user-role": "pnpm --filter backend set-user-role",
+    "import:epd-textbooks": "pnpm --filter backend import:epd-textbooks",
+    "import:epd-textbooks:dry-run": "pnpm --filter backend import:epd-textbooks -- --dry-run",
+    "textbooks:validate-import": "node scripts/textbooks-validate-import.mjs",
+    "textbooks:import": "node scripts/textbooks-import.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "eslint": "^9.15.0",
+    "prettier": "^3.3.3",
+    "turbo": "^2.3.3",
+    "typescript": "^5.6.2"
+  }
+}

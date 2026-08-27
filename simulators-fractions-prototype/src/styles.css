@@ -1,0 +1,15 @@
+:root{--bg:#f8fafc;--panel:#ffffff;--muted:#6b7280}
+*{box-sizing:border-box;font-family:Inter,system-ui,Arial,Helvetica,sans-serif}
+html,body,#root{height:100%;margin:0}
+.app{display:flex;height:100vh;background:var(--bg)}
+.left{flex:1;display:flex;align-items:center;justify-content:center;padding:24px}
+.right{width:360px;padding:20px;background:var(--panel);box-shadow:0 0 0 1px rgba(0,0,0,0.03)}
+.scene{width:100%;max-width:720px}
+.vis{display:flex;flex-direction:column;align-items:center;gap:16px}
+.pie{width:320px;height:320px}
+.bar{width:320px;height:28px;background:#e6e6e6;border-radius:6px;overflow:hidden}
+.bar-filled{height:100%;background:#4f46e5}
+.controls label{display:block;margin:8px 0;color:var(--muted)}
+.controls input[type=range]{width:100%}
+.buttons{display:flex;gap:8px;margin-top:8px}
+.equation{margin-top:16px}

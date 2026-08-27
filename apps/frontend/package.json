@@ -1,0 +1,47 @@
+{
+  "name": "frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start -p 3000",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "@codesandbox/sandpack-react": "^2.20.0",
+    "@dnd-kit/core": "^6.3.1",
+    "@edunexa/shared-constants": "workspace:*",
+    "@edunexa/shared-types": "workspace:*",
+    "@edunexa/shared-validation": "workspace:*",
+    "clsx": "2.1.1",
+    "firebase": "10.13.1",
+    "katex": "^0.18.4",
+    "next": "14.2.15",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "recharts": "^3.10.1",
+    "socket.io-client": "^4.8.3",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "6.6.3",
+    "@testing-library/react": "16.0.1",
+    "@testing-library/user-event": "^14.6.5",
+    "@types/node": "22.10.2",
+    "@types/react": "18.3.12",
+    "@types/react-dom": "18.3.1",
+    "@vitejs/plugin-react": "4.3.3",
+    "autoprefixer": "10.4.20",
+    "eslint": "8.57.0",
+    "eslint-config-next": "14.2.15",
+    "jsdom": "25.0.1",
+    "postcss": "8.4.49",
+    "tailwindcss": "3.4.14",
+    "typescript": "5.6.2",
+    "vitest": "2.1.5"
+  }
+}
