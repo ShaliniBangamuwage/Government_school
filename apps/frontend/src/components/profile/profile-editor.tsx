@@ -24,6 +24,26 @@ function readImage(file: File): Promise<string> {
   });
 }
 
+async function prepareImage(file: File): Promise<string> {
+  const source = await readImage(file);
+  const image = new Image();
+
+  await new Promise<void>((resolve, reject) => {
+    image.onload = () => resolve();
+    image.onerror = () => reject(new Error('Unable to load this image.'));
+    image.src = source;
+  });
+
+  const maxDimension = 512;
+  const scale = Math.min(1, maxDimension / Math.max(image.naturalWidth, image.naturalHeight));
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
+  canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
+  canvas.getContext('2d')?.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+  return canvas.toDataURL('image/jpeg', 0.8);
+}
+
 export function ProfileEditor({ profile, role, onSave }: { profile: AppUser | null; role: UserRole; onSave: (updates: ProfileUpdates) => Promise<void> }) {
   const { t } = useLocale();
   const [fullName, setFullName] = useState(profile?.fullName ?? '');
@@ -55,7 +75,7 @@ export function ProfileEditor({ profile, role, onSave }: { profile: AppUser | nu
       return;
     }
     try {
-      setter(await readImage(file));
+      setter(await prepareImage(file));
       setMessage(null);
     } catch (error) {
       setMessage(error instanceof Error ? error.message : 'Unable to load image.');

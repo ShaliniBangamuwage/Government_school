@@ -370,7 +370,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch (caughtError) {
       const friendly = getFriendlyAuthError(caughtError);
       setError(friendly);
-      return null;
+      throw new Error(friendly);
     } finally {
       setLoading(false);
     }
