@@ -13,6 +13,7 @@ import { SimulatorGenerationModule } from './simulator-generation/simulator-gene
 import { SubjectsModule } from './subjects/subjects.module';
 import { TextbooksModule } from './textbooks/textbooks.module';
 import { UsersModule } from './users/users.module';
+import { StudentTutorModule } from './student-tutor/student-tutor.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { UsersModule } from './users/users.module';
     SimulatorGenerationModule,
     MathematicsCatalogModule,
     MathematicsTextbookModule,
+    StudentTutorModule,
   ],
 })
 export class AppModule {}

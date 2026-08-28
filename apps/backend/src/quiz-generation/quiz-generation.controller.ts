@@ -100,6 +100,13 @@ export class QuizGenerationController {
     }
   }
 
+  @Get('admin/quizzes')
+  @UseGuards(FirebaseAuthGuard, RolesGuard)
+  @Roles('admin')
+  async listAdminQuizzes() {
+    return this.quizGenerationService.listAdminQuizzes();
+  }
+
   @Post('teacher/quizzes')
   @UseGuards(FirebaseAuthGuard, RolesGuard)
   @Roles('teacher', 'reviewer', 'admin')

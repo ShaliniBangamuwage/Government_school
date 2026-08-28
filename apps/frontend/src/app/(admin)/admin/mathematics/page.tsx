@@ -111,17 +111,25 @@ export default function AdminMathematicsPage() {
     return { totalTextbooks, verifiedTextbooks };
   }, [rows]);
 
-  const handleToggle = async (row: GradeRow, field: 'studentAccessEnabled' | 'teacherAccessEnabled') => {
+  const handleToggle = async (row: GradeRow, field: 'studentAccessEnabled' | 'teacherAccessEnabled' | 'textbookAccessEnabled') => {
+    const nextValue = !row[field];
+    setRows((currentRows) => currentRows.map((currentRow) => (
+      currentRow.id === row.id ? { ...currentRow, [field]: nextValue } : currentRow
+    )));
+
     try {
       setError(null);
       await fetchWithAuth<{ success?: boolean }>(`/api/mathematics/offerings/${row.id}/visibility`, {
         method: 'PATCH',
         body: JSON.stringify({
-          [field]: !row[field],
+          [field]: nextValue,
         }),
       });
       await loadData();
     } catch (caughtError) {
+      setRows((currentRows) => currentRows.map((currentRow) => (
+        currentRow.id === row.id ? { ...currentRow, [field]: row[field] } : currentRow
+      )));
       setError(caughtError instanceof Error ? caughtError.message : 'Unable to update access for this Mathematics offering.');
     }
   };
@@ -237,6 +245,17 @@ export default function AdminMathematicsPage() {
                               </div>
 
                               <div className="space-y-2 text-xs text-slate-200">
+                                <label className="flex items-center justify-between gap-2">
+                                  <span>Textbook access</span>
+                                  <button
+                                    type="button"
+                                    onClick={() => void handleToggle(row, 'textbookAccessEnabled')}
+                                    className={`rounded-full px-2 py-1 font-semibold ${row.textbookAccessEnabled ? 'bg-emerald-500/15 text-emerald-300' : 'bg-slate-700 text-slate-300'}`}
+                                  >
+                                    {row.textbookAccessEnabled ? 'On' : 'Off'}
+                                  </button>
+                                </label>
+
                                 <label className="flex items-center justify-between gap-2">
                                   <span>Student access</span>
                                   <button

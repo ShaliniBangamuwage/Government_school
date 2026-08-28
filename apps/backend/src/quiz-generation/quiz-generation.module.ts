@@ -19,6 +19,6 @@ import { ConfiguredAiProviderService } from './providers/configured-ai-provider.
     ConfiguredAiProviderService,
     FirebaseAdminService,
   ],
-  exports: [QuizGenerationService],
+  exports: [QuizGenerationService, SourceGroundingService, ConfiguredAiProviderService],
 })
 export class QuizGenerationModule {}

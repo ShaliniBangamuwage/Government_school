@@ -30,16 +30,11 @@ export default function TeacherMathematicsStudentsPage() {
         const quizResponse = await fetchWithAuth<{ quizzes?: { id: string; title: string }[] }>('/api/teacher/quizzes');
         const quizzes = quizResponse.quizzes ?? [];
 
-        const allAttempts: TeacherAttemptRecord[] = [];
-
-        for (const quiz of quizzes) {
-          const response = await fetchWithAuth<{ attempts?: TeacherAttemptRecord[] }>(`/api/teacher/quizzes/${quiz.id}/attempts`);
-          const attemptsForQuiz = response.attempts ?? [];
-          allAttempts.push(...attemptsForQuiz.map((attempt) => ({
+        const responses = await Promise.all(quizzes.map((quiz) => fetchWithAuth<{ attempts?: TeacherAttemptRecord[] }>(`/api/teacher/quizzes/${quiz.id}/attempts`)));
+        const allAttempts = responses.flatMap((response) => (response.attempts ?? []).map((attempt) => ({
             ...attempt,
             studentName: attempt.studentName ?? 'Unknown Student',
           })));
-        }
 
         allAttempts.sort((left, right) => {
           const leftTime = left.submittedAt && typeof left.submittedAt === 'object' && 'toMillis' in left.submittedAt

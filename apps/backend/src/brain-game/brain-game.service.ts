@@ -1,10 +1,9 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import * as admin from 'firebase-admin';
-import { evaluate } from 'mathjs';
 import { FirebaseAdminService } from '../infrastructure/firebase/firebase-admin.service';
 
-type Player = { uid: string; name: string; score: number; streak: number };
-type Puzzle = { id: string; round: number; mode: string; numbers: number[]; operators: string[]; target: number; solution?: string };
+type Player = { uid: string; name: string; avatarUrl?: string; score: number; streak: number };
+type Puzzle = { id: string; round: number; mode: string; numbers: number[]; operators: string[]; target: number; solution?: string; code: string; clues: string[]; tiles: number[] };
 type RoomPlayer = Player & { ready: boolean; expression: string; moves: number; submitted: boolean };
 type Room = { id: string; code: string; status: 'waiting' | 'countdown' | 'active' | 'finished'; round: number; totalRounds: 5; puzzle?: Puzzle; players: RoomPlayer[]; createdAt: number; roundStartedAt?: number; winnerUid?: string | null; winnerName?: string | null };
 
@@ -18,7 +17,7 @@ export class BrainGameService {
   private async profile(uid: string) {
     const user = await this.firebaseAdmin.getUserProfile(uid);
     if (!user || user.role !== 'student' || user.status !== 'active') throw new BadRequestException('Student is not available.');
-    return { uid, name: user.fullName || user.displayName || 'Student' };
+    return { uid, name: user.fullName || user.displayName || 'Student', avatarUrl: user.avatarUrl };
   }
   private challenge(round: number) {
     const max = Math.min(9 + round, 20);
@@ -35,17 +34,18 @@ export class BrainGameService {
 
   private puzzle(round: number): Puzzle {
     const sets: Array<Omit<Puzzle, 'id' | 'round'>> = [
-      { mode: 'Exact target', numbers: [2, 3, 4, 6], operators: ['+', '-', '×', '÷'], target: 24, solution: '6 × 4' },
-      { mode: 'Use every tile', numbers: [2, 3, 4, 6], operators: ['+', '-', '×', '÷'], target: 20, solution: '6 × 3 + 4 - 2' },
-      { mode: 'Limited operators', numbers: [3, 5, 7, 8], operators: ['+', '×'], target: 40, solution: '5 × 7 + 3' },
-      { mode: 'Missing tile', numbers: [2, 4, 6, 8], operators: ['+', '-', '×'], target: 18, solution: '8 + 6 + 4' },
-      { mode: 'Final puzzle', numbers: [2, 3, 5, 9], operators: ['+', '-', '×', '÷'], target: 45, solution: '9 × 5' },
+      { mode: 'Number Vault', numbers: [1, 2, 3, 4, 5, 6, 7, 8, 9], operators: [], target: 0, solution: '643', code: '643', tiles: [1, 2, 3, 4, 5, 6, 7, 8, 9], clues: ['First digit: 18 ÷ 3', 'Second digit: half of 8', 'Third digit: 15 − 12'] },
+      { mode: 'Pattern Vault', numbers: [1, 2, 3, 4, 5, 6, 7, 8, 9], operators: [], target: 0, solution: '468', code: '468', tiles: [1, 2, 3, 4, 5, 6, 7, 8, 9], clues: ['First digit: 2 + 2', 'Second digit: 2 × 3', 'Third digit: 10 − 2'] },
+      { mode: 'Shape Vault', numbers: [1, 2, 3, 4, 5, 6, 7, 8, 9], operators: [], target: 0, solution: '369', code: '369', tiles: [1, 2, 3, 4, 5, 6, 7, 8, 9], clues: ['First digit: sides of a triangle', 'Second digit: right angle × 10 ÷ 30', 'Third digit: sides of a hexagon + 3'] },
+      { mode: 'Logic Vault', numbers: [1, 2, 3, 4, 5, 6, 7, 8, 9], operators: [], target: 0, solution: '527', code: '527', tiles: [1, 2, 3, 4, 5, 6, 7, 8, 9], clues: ['First digit: prime between 4 and 6', 'Second digit: 10 ÷ 2', 'Third digit: days in a week'] },
+      { mode: 'Final Vault', numbers: [1, 2, 3, 4, 5, 6, 7, 8, 9], operators: [], target: 0, solution: '729', code: '729', tiles: [1, 2, 3, 4, 5, 6, 7, 8, 9], clues: ['First digit: 3² ÷  ?', 'Second digit: 3 × 3', 'Third digit: 30 − 21'] },
     ];
     return { id: `puzzle-${round}-${Date.now()}-${Math.random().toString(36).slice(2)}`, round, ...sets[(round - 1) % sets.length] };
   }
 
   private publicRoom(room: Room) {
-    return { ...room, players: room.players.map(({ uid, name, score, streak, ready, expression, moves, submitted }) => ({ uid, name, score, streak, ready, placedTiles: expression ? expression.split(' ').filter(Boolean).length : 0, moves, submitted, expression: room.status === 'finished' ? expression : undefined })) };
+    const safePuzzle = room.puzzle ? (({ code: _code, ...puzzle }) => puzzle)(room.puzzle) : undefined;
+    return { ...room, puzzle: room.puzzle ? safePuzzle : undefined, players: room.players.map(({ uid, name, avatarUrl, score, streak, ready, expression, moves, submitted }) => ({ uid, name, avatarUrl, score, streak, ready, placedTiles: expression ? expression.split('').filter(Boolean).length : 0, moves, submitted, expression: room.status === 'finished' ? expression : undefined })) };
   }
 
   async createRoom(uid: string) {
@@ -53,6 +53,13 @@ export class BrainGameService {
     const room: Room = { id: `room-${Date.now()}-${Math.random().toString(36).slice(2)}`, code: this.roomCode(), status: 'waiting', round: 1, totalRounds: 5, players: [{ ...profile, score: 0, streak: 0, ready: false, expression: '', moves: 0, submitted: false }], createdAt: Date.now() };
     this.rooms.set(room.id, room);
     return this.publicRoom(room);
+  }
+
+  listWaitingRooms(uid: string) {
+    return [...this.rooms.values()]
+      .filter((room) => room.status === 'waiting' && room.players.length === 1 && room.players[0].uid !== uid)
+      .sort((left, right) => right.createdAt - left.createdAt)
+      .map((room) => ({ id: room.id, code: room.code, hostName: room.players[0].name, status: room.status }));
   }
 
   async joinRoom(uid: string, code: string) {
@@ -87,13 +94,13 @@ export class BrainGameService {
     if (!room) throw new NotFoundException('Room not found.');
     const player = room.players.find((item) => item.uid === uid);
     if (!player || room.status !== 'active') throw new BadRequestException('The round is not active.');
-    if (!/^[0-9+*/()\-\s×÷]*$/.test(expression) || expression.length > 100) throw new BadRequestException('Invalid expression.');
-    player.expression = expression.replaceAll('×', '*').replaceAll('÷', '/');
+    if (!/^\d*$/.test(expression) || expression.length > 3) throw new BadRequestException('Enter a three-digit vault code.');
+    player.expression = expression;
     player.moves += 1;
     return this.publicRoom(room);
   }
 
-  submitRoomExpression(uid: string, roomId: string) {
+  submitRoomExpression(uid: string, roomId: string, submittedExpression?: string) {
     const room = this.rooms.get(roomId);
     if (!room || !room.puzzle) throw new BadRequestException('The round is not ready.');
     this.expireRound(room);
@@ -101,14 +108,11 @@ export class BrainGameService {
     const player = room.players.find((item) => item.uid === uid);
     if (!player) throw new BadRequestException('You are not in this room.');
     if (player.submitted) throw new BadRequestException('You can submit only once per round.');
+    const expression = typeof submittedExpression === 'string' ? submittedExpression : player.expression;
+    if (!/^\d{3}$/.test(expression) || expression !== room.puzzle.code) throw new BadRequestException('The vault stays locked. Check the clues and try again.');
+    player.expression = expression;
     player.submitted = true;
-    const tokens = player.expression.match(/\d+(?:\.\d+)?/g) ?? [];
-    const allowed = [...room.puzzle.numbers].sort((a, b) => a - b).join(',');
-    if (!tokens.length || [...tokens].sort((a, b) => Number(a) - Number(b)).join(',') !== allowed && room.puzzle.mode === 'Use every tile') throw new BadRequestException('Use every supplied number.');
-    let result: number;
-    try { result = Number(evaluate(player.expression)); } catch { throw new BadRequestException('That expression is not valid.'); }
-    if (!Number.isFinite(result) || Math.abs(result - room.puzzle.target) > 0.0001) throw new BadRequestException('That expression does not reach the target.');
-    player.score += room.round === 5 ? 200 : 100;
+    player.score += room.round === 5 ? 200 : 125;
     if (room.players.every((item) => item.submitted)) this.finishRound(room);
     return this.publicRoom(room);
   }
@@ -137,7 +141,7 @@ export class BrainGameService {
   }
 
   private expireRound(room: Room) {
-    if (room.status === 'active' && room.roundStartedAt && Date.now() - room.roundStartedAt >= 45_000) this.finishRound(room);
+    if (room.status === 'active' && room.roundStartedAt && Date.now() - room.roundStartedAt >= 10_000) this.finishRound(room);
   }
 
   giveUpRoom(uid: string, roomId: string) {

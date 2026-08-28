@@ -37,7 +37,7 @@ export default function VerifyEmailPage() {
     <main className="flex min-h-screen items-center justify-center bg-slate-950 px-4 py-10 text-slate-50">
       <div className="w-full max-w-lg rounded-2xl border border-slate-700 bg-slate-900 p-6 shadow-2xl shadow-cyan-950/30 md:p-8">
         <div className="mb-6">
-          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-cyan-400">EduNexa</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-cyan-400">Maths ලංකා</p>
           <h1 className="mt-3 text-3xl font-bold text-white">Continue to dashboard</h1>
           <p className="mt-2 text-sm text-slate-300">Email verification is not required during the current development phase.</p>
         </div>

@@ -24,24 +24,24 @@ export function DashboardShell({ role, title, subtitle, children }: DashboardShe
   const userLabel = useMemo(() => {
     if (profile?.fullName) return profile.fullName;
     if (firebaseUser?.displayName) return firebaseUser.displayName;
-    return 'EduNexa User';
+    return 'Maths ලංකා User';
   }, [firebaseUser, profile]);
 
   const userEmail = profile?.email || firebaseUser?.email || 'user@edunexa.app';
 
   const handleLogout = async () => {
     await logout();
-    router.push('/login');
+    router.push('/');
   };
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
       <div className="hidden lg:flex">
-        <DashboardSidebar role={role} pathname={pathname} userName={userLabel} userEmail={userEmail} onLogout={handleLogout} />
+        <DashboardSidebar role={role} pathname={pathname} userName={userLabel} userEmail={userEmail} avatarUrl={profile?.avatarUrl} onLogout={handleLogout} />
       </div>
 
       <div className="lg:pl-72">
-        <DashboardHeader role={role} title={title} subtitle={subtitle} userName={userLabel} userEmail={userEmail} onLogout={handleLogout} />
+        <DashboardHeader role={role} title={title} subtitle={subtitle} userName={userLabel} userEmail={userEmail} avatarUrl={profile?.avatarUrl} onLogout={handleLogout} />
         <DashboardMobileNav role={role} pathname={pathname} onLogout={handleLogout} />
 
         <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">

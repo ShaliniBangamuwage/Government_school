@@ -5,14 +5,16 @@ import type { ReactNode } from 'react';
 import { DashboardLoading } from '@/components/dashboard/dashboard-loading';
 import { DashboardShell } from '@/components/dashboard/dashboard-shell';
 import { useAuth } from '@/lib/auth/auth-context';
+import { useLocale } from '@/lib/i18n/locale';
 
 export default function StudentLayout({ children }: { children: ReactNode }) {
   const { firebaseUser, role, loading } = useAuth();
+  const { t } = useLocale();
 
   if (loading) {
     return (
-      <DashboardShell role="student" title="Student workspace" subtitle="Loading your learning dashboard...">
-        <DashboardLoading label="Checking student access..." />
+      <DashboardShell role="student" title={t('studentWorkspace')} subtitle={t('loadingLearningDashboard')}>
+        <DashboardLoading label={t('checkingStudentAccess')} />
       </DashboardShell>
     );
   }
@@ -22,5 +24,5 @@ export default function StudentLayout({ children }: { children: ReactNode }) {
     return null;
   }
 
-  return <DashboardShell role="student" title="Student workspace" subtitle="Track your classes and progress">{children}</DashboardShell>;
+  return <DashboardShell role="student" title={t('studentWorkspace')} subtitle={t('trackClassesProgress')}>{children}</DashboardShell>;
 }

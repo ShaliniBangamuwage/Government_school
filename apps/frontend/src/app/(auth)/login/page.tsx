@@ -77,10 +77,18 @@ function LoginForm() {
   const errorMessage = submitError || authError;
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-slate-950 px-4 py-10 text-slate-50">
-      <div className="w-full max-w-md rounded-2xl border border-slate-700 bg-slate-900 p-6 shadow-2xl shadow-cyan-950/30 md:p-8">
+    <main className="maths-symbols relative flex min-h-screen items-center justify-center overflow-hidden bg-slate-950 px-4 py-10 text-slate-50">
+      <div aria-hidden="true" className="pointer-events-none absolute left-[10%] top-20 hidden text-8xl font-black text-cyan-500/10 lg:block">√</div>
+      <div aria-hidden="true" className="pointer-events-none absolute bottom-20 right-[10%] hidden text-8xl font-black text-violet-400/10 lg:block">∞</div>
+      <div className="relative w-full max-w-md rounded-[2rem] border border-cyan-400/30 bg-slate-900/95 p-6 shadow-2xl shadow-cyan-950/30 backdrop-blur md:p-8">
+        <div className="mb-7 flex items-center gap-3">
+          <img src="/profile.jpg" alt="Maths ලංකා" className="h-14 w-14 rounded-2xl object-cover ring-2 ring-cyan-400/40" />
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-cyan-400">Maths ලංකා</p>
+            <p className="mt-1 text-xs text-slate-400">Learn. Explore. Excel.</p>
+          </div>
+        </div>
         <div className="mb-6">
-          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-cyan-400">EduNexa</p>
           <h1 className="mt-3 text-3xl font-bold text-white">Welcome back</h1>
           <p className="mt-2 text-sm text-slate-300">Sign in to continue to your learning dashboard.</p>
         </div>
@@ -117,7 +125,7 @@ function LoginForm() {
             <Link href="/forgot-password" className="font-medium text-cyan-300 underline decoration-cyan-400 underline-offset-2">Forgot password?</Link>
           </div>
 
-          <button type="submit" disabled={isSubmitting || loading} className="flex w-full items-center justify-center rounded-xl bg-cyan-500 px-4 py-3 text-base font-semibold text-slate-950 transition hover:bg-cyan-400 disabled:cursor-not-allowed disabled:bg-cyan-500/60">
+          <button type="submit" disabled={isSubmitting || loading} className="flex w-full items-center justify-center rounded-xl bg-cyan-500 px-4 py-3 text-base font-semibold text-slate-950 shadow-lg shadow-cyan-950/20 transition hover:bg-cyan-400 disabled:cursor-not-allowed disabled:bg-cyan-500/60">
             {isSubmitting || loading ? 'Signing in...' : 'Login'}
           </button>
 

@@ -13,6 +13,9 @@ export interface AppUser {
   status: UserStatus;
   grade?: number;
   medium?: UserMedium;
+  bio?: string;
+  avatarUrl?: string;
+  coverPhotoUrl?: string;
   emailVerified: boolean;
   onboardingCompleted: boolean;
   mustChangePassword?: boolean;
@@ -30,6 +33,9 @@ export interface SafeUserProfile {
   status: UserStatus;
   grade?: number;
   medium?: UserMedium;
+  bio?: string;
+  avatarUrl?: string;
+  coverPhotoUrl?: string;
   createdAt?: unknown;
   updatedAt?: unknown;
 }

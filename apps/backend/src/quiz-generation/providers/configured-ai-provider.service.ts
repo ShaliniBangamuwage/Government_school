@@ -118,6 +118,9 @@ export class ConfiguredAiProviderService implements QuizAiProvider {
             : `AI provider error (${response.status}): ${errorText}`;
 
           if (response.status === 429) {
+            if (/tokens per day|tpd|daily quota|quota.*day/i.test(errorText)) {
+              throw new Error('Groq daily quota reached. Try again after the daily reset.');
+            }
             if (!rateLimitRetried) {
               rateLimitRetried = true;
               await this.waitForRateLimit(response, errorText);
@@ -136,6 +139,9 @@ export class ConfiguredAiProviderService implements QuizAiProvider {
       } catch (error) {
         if (error instanceof Error && error.name === 'AbortError') {
           throw new Error('AI request timed out while generating the quiz questions.');
+        }
+        if (error instanceof Error && error.message.includes('Groq daily quota reached')) {
+          throw error;
         }
         lastError = error instanceof Error ? error : new Error(String(error));
       } finally {

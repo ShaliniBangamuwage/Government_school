@@ -89,7 +89,7 @@ export class SimulatorGenerationService {
 You are extracting the requirements and generating a real interactive React TypeScript mathematics simulator in one response.
 Return only valid JSON with this exact schema:
 {
-  "title": "string",
+      "title": "string",
   "description": "string",
   "learningObjectives": ["string"],
   "files": {
@@ -127,12 +127,13 @@ ${repairContext ? `\nRepair context:\n${repairContext}\n` : ''}
     let lastError: Error | null = null;
     for (let attempt = 0; attempt < 2; attempt += 1) {
       try {
-        const repairContext = attempt === 0 ? undefined : `Previous generation failed. The generated code missed requirements. Keep the same topic but repair the implementation.`;
+        const repairContext = attempt === 0 ? undefined : `Previous generation failed. The generated code missed requirements or was not valid JSON. Return strict JSON and repair the implementation while keeping the same topic.`;
         const aiResult = await this.ai.generate(buildCodePrompt(repairContext), model, [], 16384);
         const rawText = typeof aiResult === 'string' ? aiResult : JSON.stringify(aiResult);
         let parsed: unknown;
         try {
-          parsed = JSON.parse(rawText);
+          const jsonText = rawText.trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
+          parsed = JSON.parse(jsonText);
         } catch {
           throw new Error('invalid AI JSON');
         }
@@ -240,6 +241,21 @@ ${repairContext ? `\nRepair context:\n${repairContext}\n` : ''}
       return tb - ta;
     });
     return items;
+  }
+
+  async listAdminSimulators() {
+    const snap = await this.firebaseAdmin.getFirestore().collection('simulators').limit(100).get();
+    const simulators: Array<Record<string, any> & { id: string }> = snap.docs.map((doc) => ({ id: doc.id, ...(doc.data() || {}) }));
+    return {
+      simulators,
+      summary: {
+        total: simulators.length,
+        published: simulators.filter((simulator) => simulator.status === 'published').length,
+        drafts: simulators.filter((simulator) => simulator.status === 'draft').length,
+        studentViews: null,
+      },
+      usageTrackingAvailable: false,
+    };
   }
 
   async updateSimulator(teacherUid: string, simulatorId: string, patch: Record<string, unknown>) {

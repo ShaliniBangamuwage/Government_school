@@ -74,6 +74,9 @@ export class UsersController {
       onboardingCompleted?: boolean;
       displayName?: string;
       mustChangePassword?: boolean;
+      bio?: string;
+      avatarUrl?: string;
+      coverPhotoUrl?: string;
     },
   ) {
     return { user: await this.usersService.updateCurrentUser(user.uid, body) };

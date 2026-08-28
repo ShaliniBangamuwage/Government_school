@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { fetchWithAuth } from '@/lib/api/client';
 import { ProtectedRoute } from '@/lib/auth/route-guard';
 
@@ -14,7 +15,9 @@ type UserRecord = {
   mustChangePassword?: boolean;
 };
 
-export default function AdminUsersPage() {
+function AdminUsersContent() {
+  const searchParams = useSearchParams();
+  const selectedRole = searchParams.get('role') === 'student' ? 'student' : 'teacher';
   const [users, setUsers] = useState<UserRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -40,6 +43,8 @@ export default function AdminUsersPage() {
   useEffect(() => {
     void loadUsers();
   }, []);
+
+  const visibleUsers = users.filter((user) => user.role === selectedRole);
 
   const handleCreateStaff = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -74,12 +79,12 @@ export default function AdminUsersPage() {
         <div className="mx-auto max-w-6xl space-y-6">
           <div className="flex items-center justify-between gap-4">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-cyan-400">EduNexa</p>
-              <h1 className="mt-2 text-3xl font-bold">Staff user management</h1>
+              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-cyan-400">Maths ලංකා</p>
+              <h1 className="mt-2 text-3xl font-bold">{selectedRole === 'student' ? 'Student management' : 'Teacher management'}</h1>
             </div>
           </div>
 
-          <form onSubmit={handleCreateStaff} className="rounded-2xl border border-slate-700 bg-slate-900 p-6 shadow-xl">
+          {selectedRole === 'teacher' ? <form onSubmit={handleCreateStaff} className="rounded-2xl border border-slate-700 bg-slate-900 p-6 shadow-xl">
             <div className="grid gap-4 md:grid-cols-4">
               <label className="text-sm text-slate-300">
                 Full name
@@ -106,16 +111,16 @@ export default function AdminUsersPage() {
             <button type="submit" disabled={submitting} className="mt-5 rounded-xl bg-cyan-500 px-4 py-2 font-semibold text-slate-950 disabled:cursor-not-allowed disabled:opacity-60">
               {submitting ? 'Creating...' : 'Create staff account'}
             </button>
-          </form>
+          </form> : null}
 
           {error ? <div className="rounded-xl border border-red-500/40 bg-red-500/10 p-4 text-red-200">{error}</div> : null}
 
           <section className="rounded-2xl border border-slate-700 bg-slate-900 p-6">
-            <h2 className="text-xl font-semibold">Users</h2>
+            <h2 className="text-xl font-semibold">{selectedRole === 'student' ? 'Students' : 'Teachers'}</h2>
             {loading ? <p className="mt-4 text-slate-300">Loading users...</p> : null}
-            {!loading && users.length === 0 ? <p className="mt-4 text-slate-300">No users found.</p> : null}
+            {!loading && visibleUsers.length === 0 ? <p className="mt-4 text-slate-300">No users found.</p> : null}
 
-            {!loading && users.length > 0 ? (
+            {!loading && visibleUsers.length > 0 ? (
               <div className="mt-6 overflow-hidden rounded-xl border border-slate-700">
                 <table className="min-w-full divide-y divide-slate-700 text-left text-sm">
                   <thead className="bg-slate-800 text-slate-300">
@@ -128,7 +133,7 @@ export default function AdminUsersPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-800 bg-slate-900">
-                    {users.map((user) => (
+                    {visibleUsers.map((user) => (
                       <tr key={user.uid}>
                         <td className="px-4 py-3">{user.fullName}</td>
                         <td className="px-4 py-3">{user.email}</td>
@@ -145,5 +150,13 @@ export default function AdminUsersPage() {
         </div>
       </main>
     </ProtectedRoute>
+  );
+}
+
+export default function AdminUsersPage() {
+  return (
+    <Suspense fallback={<main className="min-h-screen bg-slate-950 p-8 text-slate-50">Loading users...</main>}>
+      <AdminUsersContent />
+    </Suspense>
   );
 }

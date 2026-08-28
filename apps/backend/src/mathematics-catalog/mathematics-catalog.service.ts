@@ -270,6 +270,10 @@ export class MathematicsCatalogService {
         && item.verificationStatus === 'verified'
         && this.getApprovalStatus(item) === 'approved'
         && item.accessEnabled !== false
+        && offerings.some((offering) => offering.subjectId === 'mathematics'
+          && Number(offering.grade) === Number(item.grade)
+          && this.normalizeMedium(offering.medium) === mediumKey
+          && offering.textbookAccessEnabled !== false)
         && allowedByAdmin;
 
       return visible && matchesSubject && matchesGrade && matchesMedium && matchesApproval;

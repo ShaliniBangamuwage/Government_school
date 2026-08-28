@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import * as admin from 'firebase-admin';
 import { z } from 'zod';
 import { DuplicateQuestionService } from './duplicate-question.service';
@@ -190,13 +190,20 @@ export class QuizGenerationService {
       throw new NotFoundException('Question not found.');
     }
 
-    const nextState = {
-      reviewStatus: payload.reviewStatus ?? 'pending',
+    const reviewStatus = payload.reviewStatus ?? 'pending';
+    if (reviewStatus !== 'pending' && reviewStatus !== 'approved' && reviewStatus !== 'rejected') {
+      throw new BadRequestException('reviewStatus must be pending, approved, or rejected.');
+    }
+
+    const nextState: Record<string, unknown> = {
+      reviewStatus,
       reviewedBy: actorUid,
-      reviewReason: payload.reviewReason,
       reviewedAt: admin.firestore.FieldValue.serverTimestamp(),
       updatedAt: admin.firestore.FieldValue.serverTimestamp(),
     };
+    if (typeof payload.reviewReason === 'string' && payload.reviewReason.trim()) {
+      nextState.reviewReason = payload.reviewReason.trim();
+    }
 
     await ref.update(nextState);
     return { id: questionId, ...nextState };
@@ -230,7 +237,11 @@ export class QuizGenerationService {
     await this.duplicateQuestionService.rejectIfDuplicate(parsed, this.firestore());
 
     const questionRef = this.firestore().collection('questionBank').doc(parsed.id);
-    await questionRef.set(parsed, { merge: true });
+    await questionRef.set({
+      ...parsed,
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    }, { merge: true });
     return parsed;
   }
 
@@ -241,7 +252,7 @@ export class QuizGenerationService {
     const sourceUrl = String(input.sourceUrl ?? `https://e-thaksalawa.moe.gov.lk/lcms/course/view.php?id=${grade}`);
     const questionCount = Math.min(Math.max(Number(input.questionCount ?? 3), 1), 5);
 
-    return Array.from({ length: questionCount }, (_, index) => {
+    const questions = Array.from({ length: questionCount }, (_, index) => {
       const questionNumber = index + 1;
       const prompt = `In the ${lessonTitle} topic, which option correctly matches the concept being taught?`;
       const options = [
@@ -270,6 +281,18 @@ export class QuizGenerationService {
         sourceContentHash: `hash:${input.catalogId}:${input.lessonId}:${grade}:${medium}`,
       };
     });
+
+    const batch = this.firestore().batch();
+    for (const question of questions) {
+      batch.set(this.firestore().collection('questionBank').doc(question.id), {
+        ...question,
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      }, { merge: true });
+    }
+    await batch.commit();
+
+    return questions;
   }
 
   async generateFromPrompt(actorUid: string, payload: Record<string, unknown>) {
@@ -296,6 +319,10 @@ export class QuizGenerationService {
         result = normalized;
         break;
       } catch (error) {
+        const providerMessage = error instanceof Error ? error.message : String(error);
+        if (providerMessage.includes('429') || providerMessage.includes('RESOURCE_EXHAUSTED') || providerMessage.toLowerCase().includes('quota')) {
+          throw new HttpException('The quiz AI provider quota has been reached. Please wait for the quota reset or configure a provider with available quota.', HttpStatus.TOO_MANY_REQUESTS);
+        }
         if (attempt === 1) {
           throw error;
         }
@@ -323,6 +350,26 @@ export class QuizGenerationService {
     };
 
     await quizRef.set(quizRecord, { merge: true });
+    const questionBank = this.firestore().collection('questionBank');
+    const questionBatch = this.firestore().batch();
+    for (const question of questions) {
+      const questionRef = questionBank.doc(`${quizRef.id}-${question.id}`);
+      questionBatch.set(questionRef, {
+        id: questionRef.id,
+        prompt: question.question,
+        questionType: 'single-answer-mcq',
+        difficulty: 'medium',
+        options: question.options,
+        correctAnswer: String(question.correctAnswerIndex),
+        explanation: question.explanation,
+        reviewStatus: 'pending',
+        isApproved: false,
+        quizId: quizRef.id,
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      }, { merge: true });
+    }
+    await questionBatch.commit();
     return { quiz: quizRecord };
   }
 
@@ -517,6 +564,54 @@ export class QuizGenerationService {
       });
 
     return items;
+  }
+
+  async listAdminQuizzes() {
+    const [quizSnapshot, attemptSnapshot] = await Promise.all([
+      this.firestore().collection('quizzes').limit(100).get(),
+      this.firestore().collection('quizAttempts').limit(500).get(),
+    ]);
+    const attemptsByQuiz = new Map<string, Array<Record<string, unknown>>>();
+    attemptSnapshot.docs.forEach((doc) => {
+      const attempt = doc.data() as Record<string, unknown>;
+      const quizId = String(attempt.quizId ?? '');
+      if (!quizId) return;
+      const attempts = attemptsByQuiz.get(quizId) ?? [];
+      attempts.push(attempt);
+      attemptsByQuiz.set(quizId, attempts);
+    });
+
+    const quizzes = quizSnapshot.docs.map((doc) => {
+      const quiz = doc.data() as Record<string, unknown>;
+      const attempts = (attemptsByQuiz.get(doc.id) ?? []).filter((attempt) => attempt.status === 'submitted' || attempt.submittedAt);
+      const percentages = attempts.map((attempt) => Number(attempt.percentage ?? 0));
+      const studentUids = new Set(attempts.map((attempt) => String(attempt.studentUid ?? '')).filter(Boolean));
+      return {
+        id: doc.id,
+        title: String(quiz.title ?? 'Untitled quiz'),
+        teacherId: String(quiz.teacherId ?? ''),
+        grade: Number(quiz.grade ?? 0),
+        medium: String(quiz.medium ?? 'English'),
+        status: String(quiz.status ?? 'draft'),
+        questionCount: Array.isArray(quiz.questions) ? quiz.questions.length : 0,
+        attemptCount: attempts.length,
+        studentCount: studentUids.size,
+        averagePercentage: percentages.length ? Math.round(percentages.reduce((sum, percentage) => sum + percentage, 0) / percentages.length) : 0,
+        passRate: attempts.length ? Math.round((attempts.filter((attempt) => Boolean(attempt.passed)).length / attempts.length) * 100) : 0,
+        createdAt: quiz.createdAt,
+        publishedAt: quiz.publishedAt,
+      };
+    });
+
+    return {
+      quizzes,
+      summary: {
+        total: quizzes.length,
+        published: quizzes.filter((quiz) => quiz.status === 'published').length,
+        totalAttempts: quizzes.reduce((sum, quiz) => sum + quiz.attemptCount, 0),
+        uniqueStudents: new Set(attemptSnapshot.docs.map((doc) => String(doc.data().studentUid ?? '')).filter(Boolean)).size,
+      },
+    };
   }
 
   async listStudentQuizzes(profile?: { grade?: number; medium?: string }) {

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth/auth-context';
 import { ProtectedRoute, hasRequiredStudentAcademicProfile } from '@/lib/auth/route-guard';
+import { useLocale } from '@/lib/i18n/locale';
 
 const gradeOptions = [6, 7, 8, 9, 10, 11];
 const mediumOptions = ['Sinhala', 'Tamil', 'English'] as const;
@@ -11,6 +12,7 @@ const mediumOptions = ['Sinhala', 'Tamil', 'English'] as const;
 export default function StudentCompleteProfilePage() {
   const router = useRouter();
   const { profile, grade, medium, updateCurrentProfile } = useAuth();
+  const { t } = useLocale();
   const [fullName, setFullName] = useState(profile?.fullName ?? '');
   const [selectedGrade, setSelectedGrade] = useState<number | ''>(profile?.grade ?? grade ?? '');
   const [selectedMedium, setSelectedMedium] = useState<(typeof mediumOptions)[number]>(
@@ -38,12 +40,12 @@ export default function StudentCompleteProfilePage() {
     event.preventDefault();
 
     if (!fullName.trim()) {
-      setError('Full name is required.');
+      setError(t('fullNameRequired'));
       return;
     }
 
     if (!selectedGrade || !selectedMedium) {
-      setError('Please choose your grade and medium.');
+      setError(`${t('grade')} / ${t('medium')}`);
       return;
     }
 
@@ -69,9 +71,9 @@ export default function StudentCompleteProfilePage() {
     <ProtectedRoute allowedRoles={['student']}>
       <main className="flex min-h-screen items-center justify-center bg-slate-950 px-4 py-10 text-slate-50">
         <div className="w-full max-w-xl rounded-2xl border border-slate-700 bg-slate-900 p-6 shadow-2xl shadow-cyan-950/30 md:p-8">
-          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-cyan-400">Profile setup</p>
-          <h1 className="mt-3 text-3xl font-bold text-white">Complete your student profile</h1>
-          <p className="mt-2 text-sm text-slate-300">Choose the academic details tied to your learning profile before you continue.</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-cyan-400">{t('profileSetup')}</p>
+          <h1 className="mt-3 text-3xl font-bold text-white">{t('completeStudentProfile')}</h1>
+          <p className="mt-2 text-sm text-slate-300">{t('profileSetupDescription')}</p>
 
           {error ? (
             <div role="alert" className="mt-5 rounded-lg border border-red-500/50 bg-red-500/10 px-4 py-3 text-sm text-red-200">
@@ -81,26 +83,26 @@ export default function StudentCompleteProfilePage() {
 
           <form onSubmit={handleSubmit} className="mt-6 space-y-5" noValidate>
             <div>
-              <label htmlFor="fullName" className="mb-1 block text-sm font-medium text-slate-200">Full name</label>
+              <label htmlFor="fullName" className="mb-1 block text-sm font-medium text-slate-200">{t('fullName')}</label>
               <input
                 id="fullName"
                 value={fullName}
                 onChange={(event) => setFullName(event.target.value)}
                 className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-base text-white outline-none transition focus:border-cyan-400 focus:ring-2 focus:ring-cyan-500/30"
-                placeholder="Enter your full name"
+                placeholder={t('enterFullName')}
               />
             </div>
 
             <div className="grid gap-5 md:grid-cols-2">
               <div>
-                <label htmlFor="grade" className="mb-1 block text-sm font-medium text-slate-200">Grade</label>
+                <label htmlFor="grade" className="mb-1 block text-sm font-medium text-slate-200">{t('grade')}</label>
                 <select
                   id="grade"
                   value={selectedGrade}
                   onChange={(event) => setSelectedGrade(event.target.value === '' ? '' : Number(event.target.value))}
                   className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-base text-white outline-none transition focus:border-cyan-400 focus:ring-2 focus:ring-cyan-500/30"
                 >
-                  <option value="">Select grade</option>
+                  <option value="">{t('selectGrade')}</option>
                   {gradeOptions.map((grade) => (
                     <option key={grade} value={grade}>{grade}</option>
                   ))}
@@ -108,7 +110,7 @@ export default function StudentCompleteProfilePage() {
               </div>
 
               <div>
-                <label htmlFor="medium" className="mb-1 block text-sm font-medium text-slate-200">Preferred medium</label>
+                <label htmlFor="medium" className="mb-1 block text-sm font-medium text-slate-200">{t('preferredMedium')}</label>
                 <select
                   id="medium"
                   value={selectedMedium}
@@ -127,7 +129,7 @@ export default function StudentCompleteProfilePage() {
               disabled={isSubmitting}
               className="flex w-full items-center justify-center rounded-xl bg-cyan-500 px-4 py-3 text-base font-semibold text-slate-950 transition hover:bg-cyan-400 disabled:cursor-not-allowed disabled:bg-cyan-500/60"
             >
-              {isSubmitting ? 'Saving profile...' : 'Save and continue'}
+              {isSubmitting ? t('savingChanges') : t('saveAndContinue')}
             </button>
           </form>
         </div>

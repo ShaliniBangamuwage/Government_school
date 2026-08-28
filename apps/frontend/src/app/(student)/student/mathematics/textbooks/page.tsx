@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { fetchWithAuth } from '@/lib/api/client';
 import { ProtectedRoute } from '@/lib/auth/route-guard';
 import { useAuth } from '@/lib/auth/auth-context';
+import { useLocale } from '@/lib/i18n/locale';
 
 type MathematicsTextbook = {
   id: string;
@@ -76,6 +77,7 @@ function getTextbookSourceUrl(textbook: MathematicsTextbook): string {
 
 export default function StudentMathematicsTextbooksPage() {
   const { profile } = useAuth();
+  const { t } = useLocale();
   const [items, setItems] = useState<MathematicsTextbook[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -106,8 +108,8 @@ export default function StudentMathematicsTextbooksPage() {
       <main className="min-h-screen bg-slate-950 p-6 text-slate-50">
         <div className="mx-auto max-w-6xl space-y-6">
           <header>
-            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-cyan-400">Mathematics</p>
-            <h1 className="mt-2 text-3xl font-bold">Textbooks</h1>
+            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-cyan-400">{t('mathematics')}</p>
+            <h1 className="mt-2 text-3xl font-bold">{t('textbooks')}</h1>
           </header>
 
           {error ? (
@@ -115,11 +117,11 @@ export default function StudentMathematicsTextbooksPage() {
           ) : null}
 
           {loading ? (
-            <div className="rounded-2xl border border-slate-800 bg-slate-900 p-8 text-slate-300">Loading Mathematics textbooks…</div>
+            <div className="rounded-2xl border border-slate-800 bg-slate-900 p-8 text-slate-300">{t('loadingTextbooks')}</div>
           ) : null}
 
           {!loading && !error && items.length === 0 ? (
-            <div className="rounded-2xl border border-slate-800 bg-slate-900 p-8 text-slate-300">No verified Mathematics textbooks are available for your grade and language.</div>
+            <div className="rounded-2xl border border-slate-800 bg-slate-900 p-8 text-slate-300">{t('noTextbooks')}</div>
           ) : null}
 
           {!loading && !error && items.length > 0 ? (
@@ -144,7 +146,7 @@ export default function StudentMathematicsTextbooksPage() {
                         }}
                         className="rounded-xl bg-cyan-500 px-3 py-2 text-sm font-semibold text-slate-950"
                       >
-                        Open collection
+                        {t('openCollection')}
                       </a>
                     </div>
                   </article>

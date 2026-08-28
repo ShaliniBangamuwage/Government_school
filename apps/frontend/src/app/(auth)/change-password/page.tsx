@@ -59,7 +59,7 @@ export default function ChangePasswordPage() {
     <ProtectedRoute>
       <main className="flex min-h-screen items-center justify-center bg-slate-950 px-4 py-10 text-slate-50">
         <div className="w-full max-w-md rounded-2xl border border-slate-700 bg-slate-900 p-6 shadow-xl">
-          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-cyan-400">EduNexa</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-cyan-400">Maths ලංකා</p>
           <h1 className="mt-3 text-3xl font-bold">Change password</h1>
           <p className="mt-2 text-sm text-slate-300">Choose a new password to continue.</p>
 

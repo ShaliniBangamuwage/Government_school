@@ -24,6 +24,13 @@ export class SimulatorGenerationController {
     return { simulators: items };
   }
 
+  @Get('admin/simulators')
+  @UseGuards(FirebaseAuthGuard, RolesGuard)
+  @Roles('admin')
+  async listAdminSimulators() {
+    return this.simulatorService.listAdminSimulators();
+  }
+
   @Patch('teacher/simulators/:id')
   @UseGuards(FirebaseAuthGuard, RolesGuard)
   @Roles('teacher', 'reviewer', 'admin')

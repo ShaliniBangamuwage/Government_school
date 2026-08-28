@@ -211,7 +211,7 @@ export class FirebaseAdminService {
     });
   }
 
-  async updateUserProfile(uid: string, profileInput: Partial<AppUser> & { fullName?: string; email?: string; role?: UserRole; status?: UserStatus; displayName?: string; mustChangePassword?: boolean }): Promise<AppUser> {
+  async updateUserProfile(uid: string, profileInput: Partial<AppUser> & { fullName?: string; email?: string; role?: UserRole; status?: UserStatus; displayName?: string; mustChangePassword?: boolean; bio?: string; avatarUrl?: string; coverPhotoUrl?: string }): Promise<AppUser> {
     const firestore = this.getApp().firestore();
     const existing = await this.getUserProfile(uid);
 
@@ -235,6 +235,9 @@ export class FirebaseAdminService {
       emailVerified: profileInput.emailVerified ?? existing?.emailVerified ?? true,
       onboardingCompleted: profileInput.onboardingCompleted ?? existing?.onboardingCompleted ?? false,
       mustChangePassword: typeof profileInput.mustChangePassword === 'boolean' ? profileInput.mustChangePassword : existing?.mustChangePassword ?? false,
+      bio: typeof profileInput.bio === 'string' ? profileInput.bio.trim().slice(0, 240) : existing?.bio,
+      avatarUrl: typeof profileInput.avatarUrl === 'string' ? profileInput.avatarUrl : existing?.avatarUrl,
+      coverPhotoUrl: typeof profileInput.coverPhotoUrl === 'string' ? profileInput.coverPhotoUrl : existing?.coverPhotoUrl,
       createdAt: existing?.createdAt ?? admin.firestore.FieldValue.serverTimestamp(),
       updatedAt: admin.firestore.FieldValue.serverTimestamp(),
     };

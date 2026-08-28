@@ -106,7 +106,7 @@ export class UsersService {
     return profile;
   }
 
-  async updateCurrentUser(uid: string, input: { fullName?: string; email?: string; grade?: number; medium?: string; onboardingCompleted?: boolean; displayName?: string; mustChangePassword?: boolean }): Promise<AppUser> {
+  async updateCurrentUser(uid: string, input: { fullName?: string; email?: string; grade?: number; medium?: string; onboardingCompleted?: boolean; displayName?: string; mustChangePassword?: boolean; bio?: string; avatarUrl?: string; coverPhotoUrl?: string }): Promise<AppUser> {
     const existing = await this.firebaseAdminService.getUserProfile(uid);
 
     if (!existing) {
@@ -126,6 +126,9 @@ export class UsersService {
       displayName: input.displayName?.trim() || input.fullName?.trim() || existing.displayName || existing.fullName,
       onboardingCompleted: typeof input.onboardingCompleted === 'boolean' ? input.onboardingCompleted : existing.onboardingCompleted,
       mustChangePassword: typeof input.mustChangePassword === 'boolean' ? input.mustChangePassword : existing.mustChangePassword ?? false,
+      bio: typeof input.bio === 'string' ? input.bio.trim().slice(0, 240) : existing.bio,
+      avatarUrl: typeof input.avatarUrl === 'string' ? input.avatarUrl : existing.avatarUrl,
+      coverPhotoUrl: typeof input.coverPhotoUrl === 'string' ? input.coverPhotoUrl : existing.coverPhotoUrl,
     });
 
     return profile;
